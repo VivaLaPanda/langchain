@@ -142,11 +142,16 @@ class BaseOpenAI(BaseLLM, BaseModel):
         openai_api_key = get_from_dict_or_env(
             values, "openai_api_key", "OPENAI_API_KEY"
         )
+        proxy = get_from_dict_or_env(
+            values, "https_proxy", "HTTPS_PROXY"
+        )
         try:
             import openai
 
             openai.api_key = openai_api_key
             values["client"] = openai.Completion
+            if proxy:
+                openai.proxy = proxy
         except ImportError:
             raise ValueError(
                 "Could not import openai python package. "
